@@ -332,7 +332,10 @@ class Client(Methods):
                 break
 
             if datetime.now() - self.last_update_time > timedelta(seconds=self.UPDATES_WATCHDOG_INTERVAL):
-                await self.invoke(raw.functions.updates.GetState())
+                try:
+                    await self.invoke(raw.functions.updates.GetState())
+                except Exception as e:
+                    log.warning("Updates watchdog failed: %s", e)
 
     async def authorize(self) -> User:
         if self.bot_token:

@@ -45,9 +45,9 @@ class Result:
 
 
 class Session:
-    START_TIMEOUT = 2
-    WAIT_TIMEOUT = 15
-    SLEEP_THRESHOLD = 10
+    START_TIMEOUT = 10
+    WAIT_TIMEOUT = 30
+    SLEEP_THRESHOLD = 30
     MAX_RETRIES = 10
     ACKS_THRESHOLD = 10
     PING_INTERVAL = 5
@@ -142,7 +142,7 @@ class Session:
             except AuthKeyDuplicated as e:
                 await self.stop()
                 raise e
-            except (OSError, RPCError):
+            except (OSError, RPCError, TimeoutError):
                 await self.stop()
             except Exception as e:
                 await self.stop()
@@ -397,7 +397,7 @@ class Session:
                             self.client.name, amount, query_name)
 
                 await asyncio.sleep(amount)
-            except (OSError, InternalServerError, ServiceUnavailable) as e:
+            except (OSError, InternalServerError, ServiceUnavailable, TimeoutError) as e:
                 if retries == 0:
                     raise e from None
 
